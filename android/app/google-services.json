@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "92798473121",
+    "firebase_url": "https://tastee-534d9.firebaseio.com",
+    "project_id": "tastee-534d9",
+    "storage_bucket": "tastee-534d9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:92798473121:android:b6e488f7eef395ebfe31e0",
+        "android_client_info": {
+          "package_name": "com.example.testee"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "92798473121-sattl26cg35b2to0ivilgpvcadmrtnbn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBs0CIkrpvf4iyPbuw2Mv39kPs9V7NyyOU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "92798473121-sattl26cg35b2to0ivilgpvcadmrtnbn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
