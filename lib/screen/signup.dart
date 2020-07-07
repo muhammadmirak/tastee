@@ -9,6 +9,7 @@ import '../widget/textformfilde.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../model/user.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:path/path.dart' as Path;
 
 class Signup extends StatefulWidget {
   @override
@@ -30,27 +31,48 @@ class _SignupState extends State<Signup> {
   final TextEditingController password = TextEditingController();
   final TextEditingController adders = TextEditingController();
   final GlobalKey<ScaffoldState> _scaffold = GlobalKey<ScaffoldState>();
+  File myImage;
+  Future getImage() async {
+    var myPickedImage =
+        await ImagePicker().getImage(source: ImageSource.camera);
+    setState(() {
+      myImage = File(myPickedImage.path);
+    });
+  }
+
+  Future<Map<String, String>> _uploadFile(File _image) async {
+    String _imagePath = _image.path;
+
+    StorageReference storageReference = FirebaseStorage.instance
+        .ref()
+        .child('images/${Path.basename(_imagePath)}');
+    StorageUploadTask uploadTask = storageReference.putFile(_image);
+    StorageTaskSnapshot task = await uploadTask.onComplete;
+    final String _imageUrl = (await task.ref.getDownloadURL());
+
+    Map<String, String> _downloadData = {
+      'imagePath': Path.basename(_imagePath),
+      'imageUrl': _imageUrl
+    };
+    return _downloadData;
+  }
 
   void submit() async {
     try {
       authResult = await _auth.createUserWithEmailAndPassword(
           email: email.text, password: password.text);
+      var imageMap = await _uploadFile(myImage);
 
       User user = User(
+        image: imageMap['imageUrl'],
+        userPath: imageMap['imagePath'],
         userEmail: email.text,
         userName: fullname.text,
-        userGender: adders.text,
-        userAdders: isMale ? "Male" : "Female",
+        userGender: isMale ? "Male" : "Female",
+        userAdders: adders.text,
         userNumber: int.parse(phonenumber.text),
         userPassword: password.text,
-        image: myImage,
       );
-      final ref = FirebaseStorage.instance
-          .ref()
-          .child('user_image')
-          .child(authResult.user.uid + '.jpg');
-      await ref.putFile(myImage).onComplete;
-      final url = await ref.getDownloadURL();
 
       await Firestore.instance
           .collection("user")
@@ -62,7 +84,9 @@ class _SignupState extends State<Signup> {
         "userPassword": user.userPassword,
         "userGender": user.userGender,
         "userAdders": user.userAdders,
-        "user_image":url,
+        "user_image": user.image,
+        'userId': authResult.user.uid,
+        'userPath': user.userPath,
       });
     } on PlatformException catch (error) {
       var message = 'An error occurred, pelase check youe credentials!';
@@ -102,15 +126,6 @@ class _SignupState extends State<Signup> {
           .showSnackBar(SnackBar(content: Text("Adders is Empty")));
     }
     submit();
-  }
-
-  File myImage;
-  Future getImage() async {
-    var myPickedImage =
-        await ImagePicker().getImage(source: ImageSource.camera);
-    setState(() {
-      myImage = File(myPickedImage.path);
-    });
   }
 
   Widget _buildimages() {

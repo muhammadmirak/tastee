@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+
 import '../widget/my_button.dart';
 import './profile_screen.dart';
+import 'package:provider/provider.dart';
+import '../provider/food_provider.dart';
 
 class CartScreen extends StatefulWidget {
   @override
@@ -8,9 +11,23 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-  Widget _buildContainer() {
+  FoodProvider provider;
+  double totolPrice = 0.0;
+  @override
+  void initState() {
+    super.initState();
+    FoodProvider provider = Provider.of<FoodProvider>(context, listen: false);
+    var getTotalPrice = provider.allFoodCarts;
+
+    getTotalPrice.forEach((element) {
+      totolPrice += element.foodPrice;
+    });
+  }
+
+  Widget _buildContainer(BuildContext context, int index) {
+    var allFoodCart = provider.allFoodCart;
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 20),
+      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       height: 80,
       color: Color(0xffffffff),
       width: double.infinity,
@@ -20,10 +37,10 @@ class _CartScreenState extends State<CartScreen> {
         children: <Widget>[
           CircleAvatar(
             maxRadius: 40,
-            backgroundImage: AssetImage("image/Foods.jpg"),
+            backgroundImage: NetworkImage(allFoodCart[index].foodImage),
           ),
           Text(
-            "1x",
+            "${allFoodCart[index].foodQuantity}x",
             style: TextStyle(fontSize: 25, color: Color(0xffd1d6d8)),
           ),
           Container(
@@ -31,18 +48,18 @@ class _CartScreenState extends State<CartScreen> {
             child: Column(
               children: <Widget>[
                 Text(
-                  "Pasta Cheese",
+                  allFoodCart[index].foodName,
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  "7 Ocean Hotel",
+                  allFoodCart[index].foodType,
                   style: TextStyle(fontSize: 20, color: Color(0xffd1d6d8)),
                 ),
               ],
             ),
           ),
           Text(
-            "\$50",
+            "\$ ${allFoodCart[index].foodPrice}",
             style: TextStyle(
                 fontSize: 25,
                 color: Color(0xff01d4ee),
@@ -66,7 +83,7 @@ class _CartScreenState extends State<CartScreen> {
                 "Total",
                 style: TextStyle(fontSize: 20, color: Colors.white),
               ),
-              Text("\$350",
+              Text("\$$totolPrice",
                   style: TextStyle(fontSize: 20, color: Colors.white)),
             ],
           ),
@@ -87,16 +104,20 @@ class _CartScreenState extends State<CartScreen> {
 
   @override
   Widget build(BuildContext context) {
+    provider = Provider.of<FoodProvider>(context);
     return SafeArea(
       child: Scaffold(
         backgroundColor: Color(0xfff7f8f8),
         appBar: AppBar(
           leading: IconButton(
-              icon: Icon(
-                Icons.arrow_back,
-                color: Colors.black,
-              ),
-              onPressed: () {}),
+            icon: Icon(
+              Icons.arrow_back,
+              color: Colors.black,
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
           elevation: 0.0,
           title: Center(
               child: Text(
@@ -119,16 +140,9 @@ class _CartScreenState extends State<CartScreen> {
                         borderRadius: BorderRadius.all(Radius.circular(10)),
                         color: Color(0xfff7f8f8),
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          _buildContainer(),
-                          _buildContainer(),
-                          _buildContainer(),
-                          _buildContainer(),
-                          _buildContainer(),
-                        ],
+                      child: ListView.builder(
+                        itemBuilder: _buildContainer,
+                        itemCount: provider.foodCartList,
                       ),
                     ),
                   ),

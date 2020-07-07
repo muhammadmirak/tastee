@@ -1,8 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:testee/screen/home_screen.dart';
 import '../widget/textformfilde.dart';
 import '../widget/my_button.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import '../model/user.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -10,9 +15,20 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  bool iconButton = false;
+  static User user;
+  bool isMale = true;
+  bool columnText = false;
+  String userimage;
+  void checkGender() {
+    if (user.userGender == "Male") {
+      isMale = true;
+    } else {
+      isMale = false;
+    }
+  }
 
   Widget _buildConatiner(String text) {
+    checkGender();
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(
@@ -38,16 +54,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final RegExp regex = RegExp(pattern);
 
   bool edit = false;
-  final TextEditingController fullname =
-      TextEditingController(text: "Brie Larson");
-  final TextEditingController email =
-      TextEditingController(text: "mirakbaloch@gmail.com");
-  final TextEditingController phonenumber =
-      TextEditingController(text: "+93422397488");
-  final TextEditingController gender = TextEditingController(text: "Male");
-  final TextEditingController address =
-      TextEditingController(text: "Zafar Colory");
+  var uid;
+  TextEditingController fullname;
+
+  TextEditingController email;
+
+  TextEditingController phonenumber;
+
+  TextEditingController address;
+
   final GlobalKey<ScaffoldState> _scaffold = GlobalKey<ScaffoldState>();
+
+  File image;
+  Future getImage({ImageSource source}) async {
+    final pickedImage = await ImagePicker().getImage(source: source);
+    setState(() {
+      image = File(pickedImage.path);
+    });
+  }
+
+  Future<String> _uploadFile(File _image) async {
+    StorageReference storageReference =
+        FirebaseStorage.instance.ref().child('images/${user.userPath}');
+    StorageUploadTask uploadTask = storageReference.putFile(_image);
+    StorageTaskSnapshot task = await uploadTask.onComplete;
+    final String _imageUrl = (await task.ref.getDownloadURL());
+
+    return _imageUrl;
+  }
+
+  var updateImage;
+  void userUpdate() async {
+    image != null ? updateImage = await _uploadFile(image) : Container();
+
+    Firestore.instance.collection("user").document(uid).updateData({
+      "userAdders": address.text,
+      "userEmail": email.text,
+      "userName": fullname.text,
+      "userNumber": int.parse(phonenumber.text),
+      "userGender": isMale == true ? "Male" : "Female",
+      'user_image': image == null ? user.image : updateImage,
+    });
+    setState(() {
+      columnText = false;
+    });
+  }
 
   validationText() {
     if (fullname.text.isEmpty || fullname.text.trim() == null) {
@@ -63,21 +114,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
       _scaffold.currentState.showSnackBar(SnackBar(
         content: Text("Please Try Vaild Email"),
       ));
-    } else if (gender.text.isEmpty || gender.text.trim() == null) {
-      _scaffold.currentState
-          .showSnackBar(SnackBar(content: Text("Gender is Empty")));
     } else if (address.text.isEmpty || address.text.trim() == null) {
       _scaffold.currentState
           .showSnackBar(SnackBar(content: Text("Address is Empty")));
+    } else {
+      setState(() {
+        edit = false;
+      });
     }
-  }
-
-  File image;
-  Future getImage({ImageSource source}) async {
-    final pickedImage = await ImagePicker().getImage(source: source);
-    setState(() {
-      image = File(pickedImage.path);
-    });
+    userUpdate();
   }
 
   Widget _buildtextImage() {
@@ -92,7 +137,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: CircleAvatar(
                   radius: 80,
                   backgroundImage: image == null
-                      ? AssetImage("image/jacksparrow.jpg")
+                      ? NetworkImage(user.image)
                       : FileImage(image),
                 ),
               ),
@@ -141,7 +186,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   margin: EdgeInsets.symmetric(horizontal: 20),
                   color: Color(0xfff7f8f8),
                   child: Container(
-                    child: ListView(
+                    child: Column(
                       children: <Widget>[
                         Container(
                           height: 420,
@@ -166,10 +211,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       text: "Phone Number",
                                       controller: phonenumber,
                                     ),
-                                    TextFormFild(
-                                      obscureText: false,
-                                      text: "Gender",
-                                      controller: gender,
+                                    GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          isMale = !isMale;
+                                        });
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                            color: Color(0xfffde6f0),
+                                            borderRadius:
+                                                BorderRadius.circular(20)),
+                                        height: 60,
+                                        padding: EdgeInsets.only(left: 10),
+                                        width: double.infinity,
+                                        child: Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Text(
+                                              isMale ? "Male" : "Female",
+                                              style: TextStyle(
+                                                  color: Color(0xff746a6e)),
+                                            )),
+                                      ),
                                     ),
                                     TextFormFild(
                                       obscureText: false,
@@ -182,11 +245,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
                                   children: <Widget>[
-                                    _buildConatiner("mirak"),
-                                    _buildConatiner("mirakbaloch@gmail.com"),
-                                    _buildConatiner("+923422397488"),
-                                    _buildConatiner("Male"),
-                                    _buildConatiner("Zafar Colory"),
+                                    _buildConatiner(user.userName),
+                                    _buildConatiner(user.userEmail),
+                                    _buildConatiner(user.userNumber.toString()),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                          color: Color(0xfffde6f0),
+                                          borderRadius:
+                                              BorderRadius.circular(20)),
+                                      height: 60,
+                                      padding: EdgeInsets.only(left: 10),
+                                      width: double.infinity,
+                                      child: Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            isMale ? "Male" : "Female",
+                                            style: TextStyle(
+                                                color: Color(0xff746a6e)),
+                                          )),
+                                    ),
+                                    _buildConatiner(user.userAdders),
                                   ],
                                 ),
                         ),
@@ -218,10 +296,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  void getUserData() async {
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    uid = user.uid;
+  }
+
   @override
   Widget build(BuildContext context) {
+    getUserData();
+
     return SafeArea(
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         key: _scaffold,
         appBar: AppBar(
           leading: edit == true
@@ -240,7 +326,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Icons.arrow_back,
                     color: Colors.white,
                   ),
-                  onPressed: () {}),
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (cxt) => HomeScreen(),
+                    ));
+                  }),
           elevation: 0.0,
           backgroundColor: Color(0xffff3ea5),
           title: Row(
@@ -261,7 +351,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ],
           ),
         ),
-        body: _buildAllContext(),
+        body: StreamBuilder(
+            stream: Firestore.instance.collection("user").snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              var myDocument = snapshot.data.documents;
+              myDocument.forEach((checkDocument) {
+                if (uid == checkDocument["userId"]) {
+                  user = User(
+                      userPath: checkDocument['userPath'],
+                      userEmail: checkDocument["userEmail"],
+                      userName: checkDocument["userName"],
+                      userNumber: checkDocument["userNumber"],
+                      userPassword: checkDocument["userPassword"],
+                      userGender: checkDocument["userGender"],
+                      userAdders: checkDocument["userAdders"],
+                      image: checkDocument['user_image']);
+                  userimage = checkDocument["user_image"];
+                  fullname = TextEditingController(text: user.userName);
+                  email = TextEditingController(text: user.userEmail);
+                  phonenumber =
+                      TextEditingController(text: user.userNumber.toString());
+                  address = TextEditingController(text: user.userAdders);
+                }
+              });
+              return _buildAllContext();
+            }),
       ),
     );
   }

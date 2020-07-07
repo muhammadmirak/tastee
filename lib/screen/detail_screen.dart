@@ -1,14 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:testee/provider/food_provider.dart';
 import '../widget/my_button.dart';
 import './cart_screen.dart';
 
 class DetailScreen extends StatefulWidget {
+  final String foodImage;
+  final double foodPrice;
+  final String foodType;
+  final String foodName;
+  DetailScreen({
+    this.foodImage,
+    this.foodPrice,
+    this.foodType,
+    this.foodName,
+  });
+
   @override
   _DetailScreenState createState() => _DetailScreenState();
 }
 
 class _DetailScreenState extends State<DetailScreen> {
+  FoodProvider provider;
+
   int addAndRemove = 1;
+  double totalPrice;
   Widget _buildIconButton() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -22,6 +38,7 @@ class _DetailScreenState extends State<DetailScreen> {
             setState(() {
               if (addAndRemove > 1) {
                 addAndRemove--;
+                totalPrice = widget.foodPrice * addAndRemove;
               }
             });
           },
@@ -41,6 +58,7 @@ class _DetailScreenState extends State<DetailScreen> {
           onPressed: () {
             setState(() {
               addAndRemove++;
+              totalPrice = widget.foodPrice * addAndRemove;
             });
           },
         ),
@@ -117,14 +135,16 @@ class _DetailScreenState extends State<DetailScreen> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
                 Text(
-                  "Chicken Brost",
+                  widget.foodName,
+                  // "Chicken Brost",
                   style: TextStyle(
                       fontSize: 38,
                       color: Color(0xffff3ea5),
                       fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  "Marine Star Hotel",
+                  widget.foodType,
+                  // "Marine Star Hotel",
                   style: TextStyle(fontSize: 25, color: Color(0xffc1c6cc)),
                 ),
               ],
@@ -136,7 +156,10 @@ class _DetailScreenState extends State<DetailScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(
-                  "\$50",
+                  totalPrice == null
+                      ? widget.foodPrice.toString()
+                      : totalPrice.toString(),
+                  // "\$50",
                   style: TextStyle(
                     fontSize: 25,
                     color: Color(0xff03d4ee),
@@ -184,6 +207,15 @@ class _DetailScreenState extends State<DetailScreen> {
                   color1: Colors.white,
                   text: "Submit",
                   whenpress: () {
+                    provider.addFoodCart(
+                      foodImage: widget.foodImage,
+                      foodName: widget.foodName,
+                      foodPrice:
+                          totalPrice == null ? widget.foodPrice : totalPrice,
+                      foodQuantity: addAndRemove,
+                      foodType: widget.foodType,
+                    );
+
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (ctx) => CartScreen(),
@@ -201,6 +233,7 @@ class _DetailScreenState extends State<DetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    provider = Provider.of(context);
     return Scaffold(
       body: Container(
         height: double.infinity,
@@ -238,7 +271,7 @@ class _DetailScreenState extends State<DetailScreen> {
               child: CircleAvatar(
                 maxRadius: 120,
                 backgroundColor: Colors.black38,
-                backgroundImage: AssetImage("image/cheese.jpg"),
+                backgroundImage: NetworkImage(widget.foodImage),
               ),
             ),
           ],

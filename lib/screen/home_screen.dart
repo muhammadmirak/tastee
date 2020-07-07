@@ -1,10 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:testee/model/foodmodel.dart';
 import './about.dart';
 import './cart_screen.dart';
 import './detail_screen.dart';
 import './profile_screen.dart';
 import './categoryscreen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -12,6 +14,11 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  FoodModel pasta;
+  FoodModel chickenbrost;
+  var uid;
+  String image;
+
   Widget _buildIcon() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -36,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
             backgroundColor: Colors.white,
             child: CircleAvatar(
               maxRadius: 45,
-              backgroundImage: AssetImage("image/Foods.jpg"),
+              backgroundImage: NetworkImage(image),
             ),
           ),
           SizedBox(
@@ -157,7 +164,12 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (ctx) => DetailScreen(),
+                    builder: (ctx) => DetailScreen(
+                      foodImage: pasta.foodImage,
+                      foodName: pasta.foodName,
+                      foodPrice: pasta.foodPrice,
+                      foodType: pasta.foodType,
+                    ),
                   ),
                 );
               },
@@ -195,9 +207,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               Icons.star,
                               color: Colors.yellow,
                             ),
-                            Text(text2),
+                            Text("$text2 Rating"),
                             Text(
-                              text3,
+                              "\$$text3",
                               style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
@@ -216,7 +228,7 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.only(left: 95),
             child: CircleAvatar(
               maxRadius: 65,
-              backgroundImage: AssetImage(image),
+              backgroundImage: NetworkImage(image),
             ),
           ),
         ],
@@ -287,16 +299,18 @@ class _HomeScreenState extends State<HomeScreen> {
                         scrollDirection: Axis.horizontal,
                         child: Row(
                           children: <Widget>[
-                            _buildContainerText("Pasta Cheese", "7 Ocean Hotel",
-                                "4.5 Reatings", "\$50", "image/Foods.jpg"),
                             _buildContainerText(
-                                "Chicken Brost",
-                                "Marine Star Hotel",
-                                "4.5 Reatings",
-                                "\$50",
-                                "image/maxresdefault.jpg"),
-                            _buildContainerText("Pasta Cheese", "7 Ocean Hotel",
-                                "4.5 Reatings", "\$50", "image/Foods.jpg"),
+                                pasta.foodName,
+                                pasta.foodType,
+                                pasta.foodRate.toString(),
+                                pasta.foodPrice.toString(),
+                                pasta.foodImage),
+                            _buildContainerText(
+                                chickenbrost.foodName,
+                                chickenbrost.foodType,
+                                chickenbrost.foodRate.toString(),
+                                chickenbrost.foodPrice.toString(),
+                                chickenbrost.foodImage),
                           ],
                         ),
                       ),
@@ -341,8 +355,14 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void getUserData() async {
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    uid = user.uid;
+  }
+
   @override
   Widget build(BuildContext context) {
+    getUserData();
     return SafeArea(
       child: Scaffold(
         drawer: Drawer(
@@ -439,7 +459,45 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         resizeToAvoidBottomInset: false,
         appBar: _buildAppBar(),
-        body: _buildAllContext(),
+        body: StreamBuilder(
+          stream: Firestore.instance.collection("food").snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            pasta = FoodModel(
+                foodName: snapshot.data.documents[0]["foodName"],
+                foodPrice: snapshot.data.documents[0]["foodPrice"],
+                foodType: snapshot.data.documents[0]["foodType"],
+                foodImage: snapshot.data.documents[0]["foodImage"],
+                foodRate: snapshot.data.documents[0]["foodRating"]);
+            chickenbrost = FoodModel(
+                foodName: snapshot.data.documents[1]["foodName"],
+                foodPrice: snapshot.data.documents[1]["foodPrice"],
+                foodType: snapshot.data.documents[1]["foodType"],
+                foodImage: snapshot.data.documents[1]["foodImage"],
+                foodRate: snapshot.data.documents[1]["foodRating"]);
+            return StreamBuilder(
+              stream: Firestore.instance.collection("user").snapshots(),
+              builder: (context, userimage) {
+                if (userimage.connectionState == ConnectionState.waiting) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                var myDocument = userimage.data.documents;
+                myDocument.forEach((userimage) {
+                  if (uid == userimage["userId"]) {
+                    image = userimage["user_image"];
+                  }
+                });
+                return _buildAllContext();
+              },
+            );
+          },
+        ),
       ),
     );
   }

@@ -8,8 +8,11 @@ class User {
   final String userPassword;
   final String userGender;
   final String userAdders;
-  final File image;
+  final String image;
+  final String userPath; 
+
   User({
+      @required this.userPath,
     @required this.userEmail,
     @required this.userName,
     @required this.userNumber,
