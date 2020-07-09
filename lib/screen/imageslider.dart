@@ -30,8 +30,8 @@ class ImageSlider extends StatelessWidget {
             children: <Widget>[
               Center(
                 child: MyButton(
-                  color1: Color(0xffffffff),
-                  color: Color(0xfffe257e),
+                  // color1: Color(0xffffffff),
+                  // color: Color(0xfffe257e),
                   text: "Skip",
                   whenpress: () {
                     Navigator.of(context).push(

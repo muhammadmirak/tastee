@@ -11,14 +11,15 @@ class MyButton extends StatelessWidget {
     return Container(
       height: 60,
       width: 400,
+       
       child: RaisedButton(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(18.0),
           ),
-          color: color,
+          color: Theme.of(context).accentColor,
           child: Text(
             text,
-            style: TextStyle(fontSize: 30, color: color1),
+            style: TextStyle(fontSize: 30),
           ),
           onPressed: whenpress),
     );

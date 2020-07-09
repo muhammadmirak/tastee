@@ -33,4 +33,9 @@ class FoodProvider with ChangeNotifier {
   List<FoodCart> get allFoodCarts {
     return _myFoodCart;
   }
+
+  void deteleCartFood(int index){
+    _myFoodCart.removeAt(index);
+    notifyListeners();
+  }
 }

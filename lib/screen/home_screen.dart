@@ -1,12 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:testee/model/foodmodel.dart';
+import 'package:testee/screen/contact.dart';
 import './about.dart';
 import './cart_screen.dart';
 import './detail_screen.dart';
 import './profile_screen.dart';
 import './categoryscreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../searchbar/search.dart';
+import '../searchbar/data_page.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -26,7 +29,6 @@ class _HomeScreenState extends State<HomeScreen> {
         IconButton(
             icon: Icon(
               Icons.notifications,
-              color: Colors.white,
             ),
             onPressed: () {}),
       ],
@@ -78,15 +80,21 @@ class _HomeScreenState extends State<HomeScreen> {
       decoration: InputDecoration(
           fillColor: Color(0xffffffff),
           filled: true,
-          labelText: text,
+          // labelText: text,
+          hintText: text,
           border: OutlineInputBorder(
               borderSide: BorderSide.none,
               borderRadius: BorderRadius.circular(10)),
-          suffixIcon: Icon(Icons.search)),
+          suffixIcon: IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () {
+              showSearch(context: context, delegate: DataSearch(listWords));
+            },
+          )),
     );
   }
 
-  Widget _buildContainer(String text, var image) {
+  Widget _buildContainer(String name, var image) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: GestureDetector(
@@ -115,7 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       width: 100,
                     ),
                     Text(
-                      text,
+                      name,
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                     )
@@ -153,7 +161,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildContainerText(
-      String text, String text1, String text2, String text3, var image) {
+    String name,
+    String type,
+    String rating,
+    String price,
+    var image,
+  ) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Stack(
@@ -162,16 +175,16 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.only(top: 25),
             child: GestureDetector(
               onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (ctx) => DetailScreen(
-                      foodImage: pasta.foodImage,
-                      foodName: pasta.foodName,
-                      foodPrice: pasta.foodPrice,
-                      foodType: pasta.foodType,
-                    ),
-                  ),
-                );
+                // Navigator.of(context).push(
+                //   MaterialPageRoute(
+                //     builder: (ctx) => DetailScreen(
+                //       foodImage: pasta.foodImage,
+                //       foodName: pasta.foodName,
+                //       foodPrice: pasta.foodPrice,
+                //       foodType: pasta.foodType,
+                //     ),
+                //   ),
+                // );
               },
               child: Container(
                 margin: EdgeInsets.symmetric(horizontal: 10),
@@ -189,11 +202,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Text(
-                              text,
+                              name,
                               style: TextStyle(
                                   fontSize: 20, fontWeight: FontWeight.bold),
                             ),
-                            Text(text1),
+                            Text(type),
                           ],
                         ),
                       ),
@@ -207,9 +220,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               Icons.star,
                               color: Colors.yellow,
                             ),
-                            Text("$text2 Rating"),
+                            Text("$rating Rating"),
                             Text(
-                              "\$$text3",
+                              "\$$price",
                               style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
@@ -238,7 +251,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildAppBar() {
     return AppBar(
-      backgroundColor: Color(0xfffe257e),
       elevation: 0.0,
       actions: <Widget>[
         _buildIcon(),
@@ -257,7 +269,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Expanded(
                 child: Container(
                   width: double.infinity,
-                  color: Color(0xfffe257e),
+                  color: Theme.of(context).primaryColor,
                   child: Column(
                     children: <Widget>[
                       _buildImageText(),
@@ -299,18 +311,47 @@ class _HomeScreenState extends State<HomeScreen> {
                         scrollDirection: Axis.horizontal,
                         child: Row(
                           children: <Widget>[
-                            _buildContainerText(
-                                pasta.foodName,
-                                pasta.foodType,
-                                pasta.foodRate.toString(),
-                                pasta.foodPrice.toString(),
-                                pasta.foodImage),
-                            _buildContainerText(
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (ctx) => DetailScreen(
+                                      foodImage: pasta.foodImage,
+                                      foodName: pasta.foodName,
+                                      foodPrice: pasta.foodPrice,
+                                      foodType: pasta.foodType,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: _buildContainerText(
+                                  pasta.foodName,
+                                  pasta.foodType,
+                                  pasta.foodRate.toString(),
+                                  pasta.foodPrice.toString(),
+                                  pasta.foodImage),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (ctx) => DetailScreen(
+                                      foodImage: chickenbrost.foodImage,
+                                      foodName: chickenbrost.foodName,
+                                      foodPrice: chickenbrost.foodPrice,
+                                      foodType: chickenbrost.foodType,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: _buildContainerText(
                                 chickenbrost.foodName,
                                 chickenbrost.foodType,
                                 chickenbrost.foodRate.toString(),
                                 chickenbrost.foodPrice.toString(),
-                                chickenbrost.foodImage),
+                                chickenbrost.foodImage,
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -438,7 +479,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     name: 'Contact',
                     whenPress: () {
                       Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(builder: (context) => Container()));
+                          MaterialPageRoute(builder: (context) => Contact()));
                     },
                   ),
                   Divider(

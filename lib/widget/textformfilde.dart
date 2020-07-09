@@ -16,7 +16,7 @@ class TextFormFild extends StatelessWidget {
       keyboardType: keyboard,
       initialValue: text1,
       decoration: InputDecoration(
-        fillColor: Color(0xfffde6f0),
+        fillColor: Color(0x5028d1a7),
         filled: true,
 
         hintText: text,

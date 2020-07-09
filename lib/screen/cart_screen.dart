@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../widget/my_button.dart';
-import './profile_screen.dart';
 import 'package:provider/provider.dart';
 import '../provider/food_provider.dart';
 
@@ -13,6 +12,8 @@ class CartScreen extends StatefulWidget {
 class _CartScreenState extends State<CartScreen> {
   FoodProvider provider;
   double totolPrice = 0.0;
+  var items;
+  var item;
   @override
   void initState() {
     super.initState();
@@ -26,48 +27,109 @@ class _CartScreenState extends State<CartScreen> {
 
   Widget _buildContainer(BuildContext context, int index) {
     var allFoodCart = provider.allFoodCart;
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      height: 80,
-      color: Color(0xffffffff),
-      width: double.infinity,
-      child: Row(
-        // crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: <Widget>[
-          CircleAvatar(
-            maxRadius: 40,
-            backgroundImage: NetworkImage(allFoodCart[index].foodImage),
-          ),
-          Text(
-            "${allFoodCart[index].foodQuantity}x",
-            style: TextStyle(fontSize: 25, color: Color(0xffd1d6d8)),
-          ),
-          Container(
-            height: 50,
-            child: Column(
-              children: <Widget>[
-                Text(
-                  allFoodCart[index].foodName,
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  allFoodCart[index].foodType,
-                  style: TextStyle(fontSize: 20, color: Color(0xffd1d6d8)),
-                ),
-              ],
+    return Dismissible(
+      // Each Dismissible must contain a Key. Keys allow Flutter to
+      // uniquely identify Widgets.
+      key: Key(item),
+      // We also need to provide a function that will tell our app
+      // what to do after an item has been swiped away.
+      onDismissed: (direction) {
+        provider.deteleCartFood(index);
+
+        // Remove the item from our data source
+
+        totolPrice -= allFoodCart[index].foodPrice;
+
+        // Show a snackbar! This snackbar could also contain "Undo" actions.
+        Scaffold.of(context)
+            .showSnackBar(SnackBar(content: Text("$item dismissed")));
+      },
+
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        height: 80,
+        color: Color(0xffffffff),
+        width: double.infinity,
+        child: Row(
+          // crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            CircleAvatar(
+              maxRadius: 40,
+              backgroundImage: NetworkImage(allFoodCart[index].foodImage),
             ),
-          ),
-          Text(
-            "\$ ${allFoodCart[index].foodPrice}",
-            style: TextStyle(
-                fontSize: 25,
-                color: Color(0xff01d4ee),
-                fontWeight: FontWeight.bold),
-          )
-        ],
+            Text(
+              "${allFoodCart[index].foodQuantity}x",
+              style: TextStyle(fontSize: 25, color: Color(0xffd1d6d8)),
+            ),
+            Container(
+              height: 50,
+              child: Column(
+                children: <Widget>[
+                  Text(
+                    allFoodCart[index].foodName,
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    allFoodCart[index].foodType,
+                    style: TextStyle(fontSize: 20, color: Color(0xffd1d6d8)),
+                  ),
+                ],
+              ),
+            ),
+            Text(
+              "\$ ${allFoodCart[index].foodPrice}",
+              style: TextStyle(
+                  fontSize: 25,
+                  color: Color(0xff01d4ee),
+                  fontWeight: FontWeight.bold),
+            )
+          ],
+        ),
       ),
     );
+    //  Container(
+    //   margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+    //   height: 80,
+    //   color: Color(0xffffffff),
+    //   width: double.infinity,
+    //   child: Row(
+    //     // crossAxisAlignment: CrossAxisAlignment.start,
+    //     mainAxisAlignment: MainAxisAlignment.spaceAround,
+    //     children: <Widget>[
+    //       CircleAvatar(
+    //         maxRadius: 40,
+    //         backgroundImage: NetworkImage(allFoodCart[index].foodImage),
+    //       ),
+    //       Text(
+    //         "${allFoodCart[index].foodQuantity}x",
+    //         style: TextStyle(fontSize: 25, color: Color(0xffd1d6d8)),
+    //       ),
+    //       Container(
+    //         height: 50,
+    //         child: Column(
+    //           children: <Widget>[
+    //             Text(
+    //               allFoodCart[index].foodName,
+    //               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+    //             ),
+    //             Text(
+    //               allFoodCart[index].foodType,
+    //               style: TextStyle(fontSize: 20, color: Color(0xffd1d6d8)),
+    //             ),
+    //           ],
+    //         ),
+    //       ),
+    //       Text(
+    //         "\$ ${allFoodCart[index].foodPrice}",
+    //         style: TextStyle(
+    //             fontSize: 25,
+    //             color: Color(0xff01d4ee),
+    //             fontWeight: FontWeight.bold),
+    //       )
+    //     ],
+    //   ),
+    // );
   }
 
   Widget _buildColumn() {
@@ -89,13 +151,13 @@ class _CartScreenState extends State<CartScreen> {
           ),
         ),
         MyButton(
-          color1: Color(0xffff3fa6),
-          color: Color(0xffffffff),
+          // color1: Color(0xffff3fa6),
+          // color: Color(0xffffffff),
           text: "Submint",
           whenpress: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (ctx) => ProfileScreen()),
-            );
+            // Navigator.of(context).push(
+            //   MaterialPageRoute(builder: (ctx) => ProfileScreen()),
+            // );
           },
         ),
       ],
@@ -112,7 +174,6 @@ class _CartScreenState extends State<CartScreen> {
           leading: IconButton(
             icon: Icon(
               Icons.arrow_back,
-              color: Colors.black,
             ),
             onPressed: () {
               Navigator.of(context).pop();

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:testee/screen/home_screen.dart';
 import '../widget/my_button.dart';
 import '../widget/textformfilde.dart';
 
@@ -8,7 +9,6 @@ class Contact extends StatefulWidget {
 }
 
 class _ContactState extends State<Contact> {
-  
   static Pattern pattern =
       r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
 
@@ -45,6 +45,19 @@ class _ContactState extends State<Contact> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => HomeScreen()));
+              }),
+          title: Center(
+              child: Text(
+            "Contact",
+            style: TextStyle(fontSize: 30, color: Colors.black),
+          )),
+        ),
         key: _scaffold,
         body: Container(
           margin: EdgeInsets.symmetric(horizontal: 20),
@@ -54,11 +67,6 @@ class _ContactState extends State<Contact> {
                 children: <Widget>[
                   Container(
                     height: 100,
-                    child: Center(
-                        child: Text(
-                      "Contact",
-                      style: TextStyle(fontSize: 30, color: Colors.black),
-                    )),
                   ),
                   Container(
                     height: 500,
@@ -86,8 +94,8 @@ class _ContactState extends State<Contact> {
                           controller: yourmessage,
                         ),
                         MyButton(
-                          color1: Color(0xffffffff),
-                          color: Color(0xfffe257e),
+                          // color1: Color(0xffffffff),
+                          // color: Color(0xfffe257e),
                           text: "Send",
                           whenpress: () {
                             validationText();

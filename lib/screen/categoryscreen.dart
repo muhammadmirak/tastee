@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:testee/model/foodmodel.dart';
 import '../widget/category_product.dart';
+import '../screen/detail_screen.dart';
 
 class CategoryScreen extends StatefulWidget {
   @override
@@ -16,6 +17,15 @@ class _CategoryScreenState extends State<CategoryScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Color(0xfffafafa),
+          elevation: 0.0,
+          leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                Navigator.of(context).pop();
+              }),
+        ),
         body: StreamBuilder(
           stream: Firestore.instance
               .collection("category")
@@ -60,47 +70,131 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   crossAxisCount: 2,
                   padding: EdgeInsets.only(top: 20),
                   children: <Widget>[
-                    CategoryProduct(
-                      text1: chickenfood.foodName,
-                      text: chickenfood.foodType,
-                      text2: chickenfood.foodRate.toString(),
-                      image: chickenfood.foodImage,
-                      text3: chickenfood.foodPrice.toString(),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (ctx) => DetailScreen(
+                              foodImage: chickenfood.foodImage,
+                              foodName: chickenfood.foodName,
+                              foodPrice: chickenfood.foodPrice,
+                              foodType: chickenfood.foodType,
+                            ),
+                          ),
+                        );
+                      },
+                      child: CategoryProduct(
+                        type: chickenfood.foodType,
+                        name: chickenfood.foodName,
+                        rating: chickenfood.foodRate.toString(),
+                        image: chickenfood.foodImage,
+                        price: chickenfood.foodPrice.toString(),
+                      ),
                     ),
-                    CategoryProduct(
-                      text1: chickenfood.foodName,
-                      text: chickenfood.foodType,
-                      text2: chickenfood.foodRate.toString(),
-                      image: chickenfood.foodImage,
-                      text3: chickenfood.foodPrice.toString(),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (ctx) => DetailScreen(
+                              foodImage: chickenfood.foodImage,
+                              foodName: chickenfood.foodName,
+                              foodPrice: chickenfood.foodPrice,
+                              foodType: chickenfood.foodType,
+                            ),
+                          ),
+                        );
+                      },
+                      child: CategoryProduct(
+                        type: chickenfood.foodType,
+                        name: chickenfood.foodName,
+                        rating: chickenfood.foodRate.toString(),
+                        image: chickenfood.foodImage,
+                        price: chickenfood.foodPrice.toString(),
+                      ),
                     ),
-                    CategoryProduct(
-                      text1: chickenfood.foodName,
-                      text: chickenfood.foodType,
-                      text2: chickenfood.foodRate.toString(),
-                      image: chickenfood.foodImage,
-                      text3: chickenfood.foodPrice.toString(),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (ctx) => DetailScreen(
+                              foodImage: chickenfood.foodImage,
+                              foodName: chickenfood.foodName,
+                              foodPrice: chickenfood.foodPrice,
+                              foodType: chickenfood.foodType,
+                            ),
+                          ),
+                        );
+                      },
+                      child: CategoryProduct(
+                        type: chickenfood.foodType,
+                        name: chickenfood.foodName,
+                        rating: chickenfood.foodRate.toString(),
+                        image: chickenfood.foodImage,
+                        price: chickenfood.foodPrice.toString(),
+                      ),
                     ),
-                    CategoryProduct(
-                      text1: pastafood.foodName,
-                      text: pastafood.foodType,
-                      text2: pastafood.foodRate.toString(),
-                      image: pastafood.foodImage,
-                      text3: pastafood.foodPrice.toString(),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (ctx) => DetailScreen(
+                              foodImage: pastafood.foodImage,
+                              foodName: pastafood.foodName,
+                              foodPrice: pastafood.foodPrice,
+                              foodType: pastafood.foodType,
+                            ),
+                          ),
+                        );
+                      },
+                      child: CategoryProduct(
+                        type: pastafood.foodType,
+                        name: pastafood.foodName,
+                        rating: pastafood.foodRate.toString(),
+                        image: pastafood.foodImage,
+                        price: pastafood.foodPrice.toString(),
+                      ),
                     ),
-                    CategoryProduct(
-                      text1: pastafood.foodName,
-                      text: pastafood.foodType,
-                      text2: pastafood.foodRate.toString(),
-                      image: pastafood.foodImage,
-                      text3: pastafood.foodPrice.toString(),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (ctx) => DetailScreen(
+                              foodImage: pastafood.foodImage,
+                              foodName: pastafood.foodName,
+                              foodPrice: pastafood.foodPrice,
+                              foodType: pastafood.foodType,
+                            ),
+                          ),
+                        );
+                      },
+                      child: CategoryProduct(
+                        type: pastafood.foodType,
+                        name: pastafood.foodName,
+                        rating: pastafood.foodRate.toString(),
+                        image: pastafood.foodImage,
+                        price: pastafood.foodPrice.toString(),
+                      ),
                     ),
-                    CategoryProduct(
-                      text1: pastafood.foodName,
-                      text: pastafood.foodType,
-                      text2: pastafood.foodRate.toString(),
-                      image: pastafood.foodImage,
-                      text3: pastafood.foodPrice.toString(),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (ctx) => DetailScreen(
+                              foodImage: pastafood.foodImage,
+                              foodName: pastafood.foodName,
+                              foodPrice: pastafood.foodPrice,
+                              foodType: pastafood.foodType,
+                            ),
+                          ),
+                        );
+                      },
+                      child: CategoryProduct(
+                        type: pastafood.foodType,
+                        name: pastafood.foodName,
+                        rating: pastafood.foodRate.toString(),
+                        image: pastafood.foodImage,
+                        price: pastafood.foodPrice.toString(),
+                      ),
                     ),
                   ],
                 );

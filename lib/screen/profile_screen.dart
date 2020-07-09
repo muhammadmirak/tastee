@@ -34,7 +34,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         borderRadius: BorderRadius.all(
           Radius.circular(15),
         ),
-        color: Color(0xfffde6f0),
+        color: Color(0x5028d1a7),
       ),
       height: 60,
       padding: EdgeInsets.symmetric(horizontal: 15),
@@ -177,7 +177,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Expanded(
                 flex: 1,
                 child: Container(
-                  color: Color(0xffff3ea5),
+                  color: Theme.of(context).primaryColor,
+                  // color: Color(0xffff3ea5),
                 ),
               ),
               Expanded(
@@ -219,7 +220,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       },
                                       child: Container(
                                         decoration: BoxDecoration(
-                                            color: Color(0xfffde6f0),
+                                            color: Color(0x5028d1a7),
                                             borderRadius:
                                                 BorderRadius.circular(20)),
                                         height: 60,
@@ -250,7 +251,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     _buildConatiner(user.userNumber.toString()),
                                     Container(
                                       decoration: BoxDecoration(
-                                          color: Color(0xfffde6f0),
+                                          color: Color(0x5028d1a7),
                                           borderRadius:
                                               BorderRadius.circular(20)),
                                       height: 60,
@@ -272,8 +273,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           children: <Widget>[
                             edit == true
                                 ? MyButton(
-                                    color1: Color(0xffffffff),
-                                    color: Color(0xfffe257e),
+                                    // color1: Color(0xffffffff),
+                                    // color: Color(0xfffe257e),
                                     text: "Update",
                                     whenpress: () {
                                       validationText();
@@ -314,7 +315,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ? IconButton(
                   icon: Icon(
                     Icons.close,
-                    color: Colors.white,
                   ),
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
@@ -324,7 +324,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               : IconButton(
                   icon: Icon(
                     Icons.arrow_back,
-                    color: Colors.white,
                   ),
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
@@ -332,7 +331,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ));
                   }),
           elevation: 0.0,
-          backgroundColor: Color(0xffff3ea5),
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[

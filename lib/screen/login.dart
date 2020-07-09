@@ -138,8 +138,8 @@ class _LoginState extends State<Login> {
                         ),
                       if (!_isLoading)
                         MyButton(
-                            color1: Color(0xffffffff),
-                            color: Color(0xfffe257e),
+                            // color1: Color(0xffffffff),
+                            // color: Color(0xfffe257e),
                             text: "Login",
                             whenpress: () {
                               validationText();
@@ -166,8 +166,10 @@ class _LoginState extends State<Login> {
                               },
                               child: Text(
                                 "Signup",
-                                style:
-                                    TextStyle(fontSize: 20, color: Colors.red),
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.red,
+                                ),
                               ),
                             )
                         ],

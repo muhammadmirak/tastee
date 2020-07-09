@@ -265,8 +265,8 @@ class _SignupState extends State<Signup> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       MyButton(
-                        color1: Color(0xffffffff),
-                        color: Color(0xfffe257e),
+                        // color1: Color(0xffffffff),
+                        // color: Color(0xfffe257e),
                         text: "Signup",
                         whenpress: () {
                           validationText();

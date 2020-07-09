@@ -67,7 +67,7 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   Widget _buildContainer(
-      String text, String text1, String text2, String text3) {
+      String name, String type, String rating, String price) {
     return Container(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -78,14 +78,14 @@ class _DetailScreenState extends State<DetailScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  text,
+                  name,
                   style: TextStyle(
                     fontSize: 25,
                     color: Color(0xffc1c6cc),
                   ),
                 ),
                 Text(
-                  text1,
+                  type,
                   style: TextStyle(
                     fontSize: 25,
                     color: Color(0xffff2d9d),
@@ -100,14 +100,14 @@ class _DetailScreenState extends State<DetailScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  text2,
+                  rating,
                   style: TextStyle(
                     fontSize: 25,
                     color: Color(0xffc1c6cc),
                   ),
                 ),
                 Text(
-                  text3,
+                  price,
                   style: TextStyle(
                     fontSize: 25,
                     color: Color(0xffc1c6cc),
@@ -203,8 +203,8 @@ class _DetailScreenState extends State<DetailScreen> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
                 MyButton(
-                  color: Color(0xffff3fa6),
-                  color1: Colors.white,
+                  // color: Color(0xffff3fa6),
+                  // color1: Colors.white,
                   text: "Submit",
                   whenpress: () {
                     provider.addFoodCart(
@@ -235,6 +235,10 @@ class _DetailScreenState extends State<DetailScreen> {
   Widget build(BuildContext context) {
     provider = Provider.of(context);
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Color(0xfffafafa),
+        elevation: 0.0,
+      ),
       body: Container(
         height: double.infinity,
         width: double.infinity,
@@ -266,7 +270,7 @@ class _DetailScreenState extends State<DetailScreen> {
               ),
             ),
             Positioned(
-              top: 60,
+              top: 25,
               left: 100,
               child: CircleAvatar(
                 maxRadius: 120,
